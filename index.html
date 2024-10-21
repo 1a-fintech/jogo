@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo do Rousseau</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Jogo do Rousseau</h1>
+            <div class="players">
+                <div class="player" id="president">Presidente</div>
+                <div class="player" id="citizen1">Cidadão 1</div>
+                <div class="player" id="citizen2">Cidadão 2</div>
+                <div class="player" id="economist">Economista</div>
+                <div class="player" id="journalist">Jornalista</div>
+            </div>
+        </header>
+        
+        <section class="status-bars">
+            <div class="status">
+                <span>População</span>
+                <progress id="population" value="50" max="100"></progress>
+            </div>
+            <div class="status">
+                <span>Economia</span>
+                <progress id="economy" value="50" max="100"></progress>
+            </div>
+            <div class="status">
+                <span>Reputação</span>
+                <progress id="reputation" value="50" max="100"></progress>
+            </div>
+        </section>
+        
+        <section class="question-area">
+            <div id="questions-container">
+                <!-- Perguntas serão inseridas aqui dinamicamente -->
+            </div>
+            <div id="decision-buttons">
+                <!-- Botões de decisão serão inseridos aqui dinamicamente -->
+            </div>
+        </section>
+        
+        <section class="end-screen" id="end-screen">
+            <h2>Fim do Mandato</h2>
+            <img id="end-image" src="" alt="Resultado">
+            <p id="end-message"></p>
+            <button onclick="location.reload()">Jogar Novamente</button>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
