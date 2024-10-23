@@ -2,56 +2,212 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo do Rousseau</title>
+    <title>Simulador de Governo</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fonte Moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Jogo do Rousseau</h1>
-            <div class="players">
-                <div class="player" id="president">Presidente</div>
-                <div class="player" id="citizen1">Cidadão 1</div>
-                <div class="player" id="citizen2">Cidadão 2</div>
-                <div class="player" id="economist">Economista</div>
-                <div class="player" id="journalist">Jornalista</div>
-            </div>
-        </header>
+        <h1>Simulador de Governo</h1>
         
-        <section class="status-bars">
-            <div class="status">
-                <span>População</span>
-                <progress id="population" value="50" max="100"></progress>
+        <!-- Tela de Seleção de Jogadores -->
+        <div class="player-selection">
+            <h2>Selecione os Jogadores</h2>
+            <div id="playerInputs">
+                <div class="player">
+                    <label for="player1Name">Jogador 1:</label>
+                    <input type="text" id="player1Name" placeholder="Nome do Jogador 1">
+                </div>
+                <div class="player">
+                    <label for="player2Name">Jogador 2:</label>
+                    <input type="text" id="player2Name" placeholder="Nome do Jogador 2">
+                </div>
+                <div class="player">
+                    <label for="player3Name">Jogador 3:</label>
+                    <input type="text" id="player3Name" placeholder="Nome do Jogador 3">
+                </div>
+                <div class="player">
+                    <label for="player4Name">Jogador 4:</label>
+                    <input type="text" id="player4Name" placeholder="Nome do Jogador 4">
+                </div>
+                <div class="player">
+                    <label for="player5Name">Jogador 5:</label>
+                    <input type="text" id="player5Name" placeholder="Nome do Jogador 5">
+                </div>
             </div>
-            <div class="status">
-                <span>Economia</span>
-                <progress id="economy" value="50" max="100"></progress>
+            
+            <!-- Seleção de Dificuldade -->
+            <div class="difficulty-selection">
+                <h2>Escolha a Dificuldade</h2>
+                <select id="difficultyLevel">
+                    <option value="">Selecione a Dificuldade</option>
+                    <option value="easy">Fácil</option>
+                    <option value="medium">Médio</option>
+                    <option value="hard">Difícil</option>
+                </select>
             </div>
-            <div class="status">
-                <span>Reputação</span>
-                <progress id="reputation" value="50" max="100"></progress>
+            
+            <button id="startGameButton">Iniciar Jogo</button>
+        </div>
+
+        <!-- Tela de Sorteio do Presidente -->
+        <div class="president-selection" style="display: none;">
+            <h2>Sorteando o Presidente...</h2>
+            <div id="presidentDisplay" class="animate-pulse"></div>
+        </div>
+
+        <!-- Seção do Jogo -->
+        <div class="game-area" style="display: none;">
+            <div class="score-display">
+                <span>Pontuação: <span id="score">0</span></span>
             </div>
-        </section>
-        
-        <section class="question-area">
-            <div id="questions-container">
-                <!-- Perguntas serão inseridas aqui dinamicamente -->
+
+            <div class="status-bars">
+                <div class="status-bar">
+                    <label><i class="fas fa-users"></i> População</label>
+                    <progress id="populacao" value="50" max="100"></progress>
+                </div>
+                <div class="status-bar">
+                    <label><i class="fas fa-chart-line"></i> Economia</label>
+                    <progress id="economia" value="50" max="100"></progress>
+                </div>
+                <div class="status-bar">
+                    <label><i class="fas fa-globe"></i> Reputação Internacional</label>
+                    <progress id="reputacaoInternacional" value="50" max="100"></progress>
+                </div>
+                <div class="status-bar">
+                    <label><i class="fas fa-newspaper"></i> Reputação (Mídia)</label>
+                    <progress id="reputacaoMídia" value="50" max="100"></progress>
+                </div>
+                <div class="status-bar">
+                    <label><i class="fas fa-city"></i> Reputação Local</label>
+                    <progress id="reputacaoLocal" value="50" max="100"></progress>
+                </div>
             </div>
-            <div id="decision-buttons">
-                <!-- Botões de decisão serão inseridos aqui dinamicamente -->
+
+            <div class="round-info">
+                <span>Mandato: <span id="currentRound">1</span>/<span id="totalRounds">4</span></span>
             </div>
-        </section>
-        
-        <section class="end-screen" id="end-screen">
+
+            <div class="current-turn">
+                <span>Vez de: <span id="currentPlayer">[Nome do Jogador]</span></span>
+            </div>
+
+            <!-- Seção de Feedback Narrativo -->
+            <div class="narrative-section" id="narrativeSection" style="display: none;">
+                <h3>Narrativa:</h3>
+                <div id="narrativeText"></div>
+            </div>
+
+            <!-- Seção de Seleção de Perguntas -->
+            <div class="question-section">
+                <h3>Selecione suas Perguntas:</h3>
+                <div id="questionList">
+                    <!-- Perguntas serão geradas dinamicamente para cada jogador -->
+                </div>
+                <button id="submitQuestionsButton" disabled>Confirmar Seleção</button>
+            </div>
+
+            <!-- Seção de Decisão do Presidente -->
+            <div class="decision-section" id="decisionSection" style="display: none;">
+                <h3>Presidente, decida para cada pergunta:</h3>
+                <div class="decisions-container" id="decisionsContainer">
+                    <!-- Decisões do presidente serão inseridas aqui -->
+                </div>
+            </div>
+
+            <!-- Seção de Feedback Narrativo após Decisões -->
+            <div class="narrative-section" id="postDecisionNarrativeSection" style="display: none;">
+                <h3>Narrativa:</h3>
+                <div id="postDecisionNarrativeText"></div>
+            </div>
+
+            <!-- Seção de Feedback Visual -->
+            <div class="visual-feedback" id="visualFeedback" style="display: none;">
+                <h3>Impacto das Decisões:</h3>
+                <canvas id="impactChart"></canvas>
+            </div>
+
+            <!-- Seção de Feedback das Decisões -->
+            <div class="feedback" id="feedback" style="display: none;">
+                <div id="feedbackMessage"></div>
+                <div class="feedback-bars">
+                    <div class="feedback-bar">
+                        <span>População:</span>
+                        <span id="popChange"></span>
+                    </div>
+                    <div class="feedback-bar">
+                        <span>Economia:</span>
+                        <span id="econChange"></span>
+                    </div>
+                    <div class="feedback-bar">
+                        <span>Reputação Internacional:</span>
+                        <span id="repInternacionalChange"></span>
+                    </div>
+                    <div class="feedback-bar">
+                        <span>Reputação (Mídia):</span>
+                        <span id="repMídiaChange"></span>
+                    </div>
+                    <div class="feedback-bar">
+                        <span>Reputação Local:</span>
+                        <span id="repLocalChange"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Histórico de Decisões -->
+            <div class="history" id="history">
+                <h2>Histórico de Decisões</h2>
+                <ul id="historyList">
+                    <!-- Itens do histórico serão adicionados aqui -->
+                </ul>
+            </div>
+
+            <!-- Seção de Gráficos de Evolução das Métricas -->
+            <div class="impact-chart-section" style="display: none;">
+                <h3>Evolução das Métricas</h3>
+                <canvas id="evolutionChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Seção de Fim de Jogo -->
+        <div class="end-game" style="display: none;">
             <h2>Fim do Mandato</h2>
-            <img id="end-image" src="" alt="Resultado">
-            <p id="end-message"></p>
-            <button onclick="location.reload()">Jogar Novamente</button>
-        </section>
+            <div id="endMessage"></div>
+            <img id="endImage" src="" alt="Fim do Jogo" class="end-image">
+            <button id="restartButton">Reiniciar Jogo</button>
+        </div>
+    </div>
+
+    <!-- Modal para Eventos Aleatórios -->
+    <div class="modal" id="eventModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button" id="closeEventModal">&times;</span>
+            <h3>Evento Especial</h3>
+            <div id="eventDescription"></div>
+            <div class="event-buttons">
+                <button id="eventAcceptButton" class="event-accept">Aceitar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Decisões -->
+    <div class="modal" id="decisionModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button" id="closeDecisionModal">&times;</span>
+            <h3>Decisões do Presidente</h3>
+            <div id="decisionDetails">
+                <!-- Detalhes das decisões serão inseridos aqui -->
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
+    <script src="questions.js"></script>
 </body>
 </html>
