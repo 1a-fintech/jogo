@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Simulador de Governo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Fonte Moderna -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Simulador de Governo</h1>
+        <h2 class="subtitle">baseado nos ideais de Rousseau</h2>
         
         <!-- Tela de Seleção de Jogadores -->
         <div class="player-selection">
@@ -55,62 +53,66 @@
             <button id="startGameButton">Iniciar Jogo</button>
         </div>
 
-        <!-- Tela de Sorteio do Presidente -->
-        <div class="president-selection" style="display: none;">
-            <h2>Sorteando o Presidente...</h2>
-            <div id="presidentDisplay" class="animate-pulse"></div>
+        <!-- Tela de Sorteio das Funções -->
+        <div class="role-assignment" style="display: none;">
+            <h2>Sorteio das Funções</h2>
+            <div id="rolesDisplay">
+                <!-- Funções serão exibidas aqui -->
+            </div>
+            <button id="proceedToGameButton" style="display: none;">Prosseguir</button>
         </div>
 
         <!-- Seção do Jogo -->
         <div class="game-area" style="display: none;">
-            <div class="score-display">
-                <span>Pontuação: <span id="score">0</span></span>
+            <div class="score-and-round">
+                <!-- Exibir a pontuação -->
+                <div class="score-display">
+                    <span>Pontuação: <span id="score">0</span></span>
+                </div>
+
+                <div class="round-info">
+                    <span>Mandato: <span id="currentRound">1</span>/<span id="totalRounds">4</span></span>
+                </div>
             </div>
 
             <div class="status-bars">
                 <div class="status-bar">
                     <label><i class="fas fa-users"></i> População</label>
                     <progress id="populacao" value="50" max="100"></progress>
+                    <span class="progress-value" id="populacaoValue">50</span>
                 </div>
                 <div class="status-bar">
                     <label><i class="fas fa-chart-line"></i> Economia</label>
                     <progress id="economia" value="50" max="100"></progress>
+                    <span class="progress-value" id="economiaValue">50</span>
                 </div>
                 <div class="status-bar">
-                    <label><i class="fas fa-globe"></i> Reputação Internacional</label>
+                    <label><i class="fas fa-globe"></i> Internacional</label>
                     <progress id="reputacaoInternacional" value="50" max="100"></progress>
+                    <span class="progress-value" id="reputacaoInternacionalValue">50</span>
                 </div>
                 <div class="status-bar">
                     <label><i class="fas fa-newspaper"></i> Reputação (Mídia)</label>
-                    <progress id="reputacaoMídia" value="50" max="100"></progress>
+                    <progress id="reputacaoMidia" value="50" max="100"></progress>
+                    <span class="progress-value" id="reputacaoMidiaValue">50</span>
                 </div>
                 <div class="status-bar">
                     <label><i class="fas fa-city"></i> Reputação Local</label>
                     <progress id="reputacaoLocal" value="50" max="100"></progress>
+                    <span class="progress-value" id="reputacaoLocalValue">50</span>
                 </div>
-            </div>
-
-            <div class="round-info">
-                <span>Mandato: <span id="currentRound">1</span>/<span id="totalRounds">4</span></span>
             </div>
 
             <div class="current-turn">
                 <span>Vez de: <span id="currentPlayer">[Nome do Jogador]</span></span>
             </div>
 
-            <!-- Seção de Feedback Narrativo -->
-            <div class="narrative-section" id="narrativeSection" style="display: none;">
-                <h3>Narrativa:</h3>
-                <div id="narrativeText"></div>
-            </div>
-
             <!-- Seção de Seleção de Perguntas -->
             <div class="question-section">
-                <h3>Selecione suas Perguntas:</h3>
+                <h3>Selecione sua Pergunta:</h3>
                 <div id="questionList">
                     <!-- Perguntas serão geradas dinamicamente para cada jogador -->
                 </div>
-                <button id="submitQuestionsButton" disabled>Confirmar Seleção</button>
             </div>
 
             <!-- Seção de Decisão do Presidente -->
@@ -121,21 +123,10 @@
                 </div>
             </div>
 
-            <!-- Seção de Feedback Narrativo após Decisões -->
-            <div class="narrative-section" id="postDecisionNarrativeSection" style="display: none;">
-                <h3>Narrativa:</h3>
-                <div id="postDecisionNarrativeText"></div>
-            </div>
-
-            <!-- Seção de Feedback Visual -->
-            <div class="visual-feedback" id="visualFeedback" style="display: none;">
-                <h3>Impacto das Decisões:</h3>
-                <canvas id="impactChart"></canvas>
-            </div>
-
             <!-- Seção de Feedback das Decisões -->
             <div class="feedback" id="feedback" style="display: none;">
                 <div id="feedbackMessage"></div>
+                <hr class="white-line">
                 <div class="feedback-bars">
                     <div class="feedback-bar">
                         <span>População:</span>
@@ -146,12 +137,12 @@
                         <span id="econChange"></span>
                     </div>
                     <div class="feedback-bar">
-                        <span>Reputação Internacional:</span>
+                        <span>Internacional:</span>
                         <span id="repInternacionalChange"></span>
                     </div>
                     <div class="feedback-bar">
                         <span>Reputação (Mídia):</span>
-                        <span id="repMídiaChange"></span>
+                        <span id="repMidiaChange"></span>
                     </div>
                     <div class="feedback-bar">
                         <span>Reputação Local:</span>
@@ -163,14 +154,23 @@
             <!-- Seção de Histórico de Decisões -->
             <div class="history" id="history">
                 <h2>Histórico de Decisões</h2>
+                <!-- Divisão do histórico -->
+                <h3>Perguntas</h3>
                 <ul id="historyList">
-                    <!-- Itens do histórico serão adicionados aqui -->
+                    <!-- Itens do histórico de perguntas serão adicionados aqui -->
+                </ul>
+                <br>
+                <h3>Eventos</h3>
+                <ul id="eventHistoryList">
+                    <!-- Itens do histórico de eventos serão adicionados aqui -->
                 </ul>
             </div>
 
+            <hr class="white-line">
+
             <!-- Seção de Gráficos de Evolução das Métricas -->
-            <div class="impact-chart-section" style="display: none;">
-                <h3>Evolução das Métricas</h3>
+            <div class="impact-chart-section">
+                <h2 class="section-title">Evolução das Métricas</h2>
                 <canvas id="evolutionChart"></canvas>
             </div>
         </div>
@@ -188,7 +188,7 @@
     <div class="modal" id="eventModal" style="display: none;">
         <div class="modal-content">
             <span class="close-button" id="closeEventModal">&times;</span>
-            <h3>Evento Especial</h3>
+            <h3 id="eventTitle">Evento Especial</h3>
             <div id="eventDescription"></div>
             <div class="event-buttons">
                 <button id="eventAcceptButton" class="event-accept">Aceitar</button>
@@ -196,17 +196,7 @@
         </div>
     </div>
 
-    <!-- Modal para Decisões -->
-    <div class="modal" id="decisionModal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-button" id="closeDecisionModal">&times;</span>
-            <h3>Decisões do Presidente</h3>
-            <div id="decisionDetails">
-                <!-- Detalhes das decisões serão inseridos aqui -->
-            </div>
-        </div>
-    </div>
-
+    <!-- Scripts -->
     <script src="script.js"></script>
     <script src="questions.js"></script>
 </body>
